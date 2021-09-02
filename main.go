@@ -16,6 +16,7 @@ type Post struct {
 }
 
 var posts []Post
+var books interface{}
 
 func getPosts(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
@@ -66,9 +67,9 @@ func updatePost(w http.ResponseWriter, r *http.Request) {
 func deletePost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
-	for _, item := range posts {
+	for index, item := range posts {
 		if item.ID == params["id"] {
-			posts = append(posts[:index], posts[index+1]...)
+			posts = append(posts[:index], posts[index+1:]...)
 			break
 		}
 	}
