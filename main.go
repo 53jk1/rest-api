@@ -2,7 +2,9 @@ package main
 
 import (
 	"encoding/json"
+	"math/rand"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 )
@@ -34,7 +36,12 @@ func getPosts(w http.ResponseWriter, r *http.Request) {
 }
 
 func createPost(w http.ResponseWriter, r *http.Request) {
-
+	w.Header().Set("Content-Type", "application/json")
+	var post Post
+	_ = json.NewDecoder(r.Body).Decode(post)
+	post.ID = strconv.Itoa(rand.Intn(1000000))
+	posts = append(posts, post)
+	json.NewEncoder(w).Encode(&post)
 }
 
 func getPost(w http.ResponseWriter, r *http.Request) {
