@@ -29,18 +29,18 @@ func getPosts(w http.ResponseWriter, r *http.Request) {
 // 	json.NewEncoder(w).Encode(&post)
 // }
 
-// func getPost(w http.ResponseWriter, r *http.Request) {
-// 	w.Header().Set("Content-Type", "application/json")
-// 	params := mux.Vars(r)
-// 	for _, item := range posts {
-// 		if item.ID == params["id"] {
-// 			json.NewEncoder(w).Encode(item)
-// 			break
-// 		}
-// 		return
-// 	}
-// 	json.NewEncoder(w).Encode(&Post{})
-// }
+func getPost(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	for _, item := range posts {
+		if item.ID == params["id"] {
+			json.NewEncoder(w).Encode(item)
+			break
+		}
+		return
+	}
+	json.NewEncoder(w).Encode(&Post{})
+}
 
 // func updatePost(w http.ResponseWriter, r *http.Request) {
 // 	w.Header().Set("Content-Type", "application/json")
@@ -82,7 +82,7 @@ func main() {
 
 	router.HandleFunc("/posts", getPosts).Methods("GET")
 	// router.HandleFunc("/posts", createPost).Methods("POST")
-	// router.HandleFunc("/posts/{id}", getPost).Methods("GET")
+	router.HandleFunc("/posts/{id}", getPost).Methods("GET")
 	// router.HandleFunc("/posts/{id}", updatePost).Methods("PUT")
 	// router.HandleFunc("/posts/{id}", deletePost).Methods("DELETE")
 
