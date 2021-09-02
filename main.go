@@ -38,7 +38,16 @@ func createPost(w http.ResponseWriter, r *http.Request) {
 }
 
 func getPost(w http.ResponseWriter, r *http.Request) {
-
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	for _, item := range posts {
+		if item.ID == params["id"] {
+			json.NewEncoder(w).Encode(item)
+			break
+		}
+		return
+	}
+	json.NewEncoder(w).Encode(&Post{})
 }
 
 func updatePost(w http.ResponseWriter, r *http.Request) {
