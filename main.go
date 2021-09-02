@@ -31,15 +31,14 @@ func getPosts(w http.ResponseWriter, r *http.Request) {
 
 func getPost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	params := mux.Vars(r)
+	vars := mux.Vars(r)
+	key := vars["id"]
 	for _, item := range posts {
-		if item.ID == params["id"] {
+		if item.ID == key {
 			json.NewEncoder(w).Encode(item)
 			break
 		}
-		return
 	}
-	json.NewEncoder(w).Encode(&Post{})
 }
 
 // func updatePost(w http.ResponseWriter, r *http.Request) {
