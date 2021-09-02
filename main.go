@@ -77,5 +77,13 @@ func updatePost(w http.ResponseWriter, r *http.Request) {
 }
 
 func deletePost(w http.ResponseWriter, r *http.Request) {
-
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	for _, item := range posts {
+		if item.ID == params["id"] {
+			posts = append(posts[:index], posts[index+1]...)
+			break
+		}
+	}
+	json.NewEncoder(w).Encode(books)
 }
