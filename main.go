@@ -76,24 +76,24 @@ func getPost(w http.ResponseWriter, r *http.Request) {
 	}
 	json.NewEncoder(w).Encode(post)
 }
-
 func updatePost(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
-	for index, item := range posts {
-		if item.ID == params["id"] {
-			posts = append(posts[:index], posts[index+1:]...)
-
-			var post Post
-			_ = json.NewDecoder(r.Body).Decode(&post)
-			post.ID = params["id"]
-			posts = append(posts, post)
-			json.NewEncoder(w).Encode(&post)
-
-			return
-		}
+	stmt, err := db.Prepare("UPDATE posts SET title = ? WHERE id = ?")
+	if err != nil {
+		panic(err.Error())
 	}
-	json.NewEncoder(w).Encode(posts)
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		panic(err.Error())
+	}
+	keyVal := make(map[string]string)
+	json.Unmarshal(body, &keyVal)
+	newTitle := keyVal["title"]
+	_, err = stmt.Exec(newTitle, params["id"])
+	if err != nil {
+		panic(err.Error())
+	}
+	fmt.Fprintf(w, "Post with ID = %s was updated", params["id"])
 }
 
 func deletePost(w http.ResponseWriter, r *http.Request) {
