@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"math/rand"
 	"net/http"
@@ -17,6 +18,8 @@ type Post struct {
 
 var posts []Post
 var books interface{}
+var db *sql.DB
+var err error
 
 func getPosts(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
@@ -76,6 +79,11 @@ func deletePost(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	db, err = sql.Open("mysql", "<user>:<password>@tcp(127.0.0.1:3306)/<dbname>")
+	if err != nil {
+		panic(err.Error())
+	}
+	defer db.Close()
 
 	router := mux.NewRouter()
 
