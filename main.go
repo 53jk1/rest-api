@@ -3,9 +3,9 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
-	"math/rand"
+	"fmt"
+	"io/ioutil"
 	"net/http"
-	"strconv"
 
 	"github.com/gorilla/mux"
 )
@@ -41,12 +41,22 @@ func getPosts(w http.ResponseWriter, r *http.Request) {
 }
 
 func createPost(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	var post Post
-	_ = json.NewDecoder(r.Body).Decode(&post)
-	post.ID = strconv.Itoa(rand.Intn(1000000))
-	posts = append(posts, post)
-	json.NewEncoder(w).Encode(&post)
+	stmt, err := db.Prepare("INSERT INTO posts(title) VALUES(?)")
+	if err != nil {
+		panic(err.Error())
+	}
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		panic(err.Error())
+	}
+	keyVal := make(map[string]string)
+	json.Unmarshal(body, &keyVal)
+	title := keyVal["title"]
+	_, err = stmt.Exec(title)
+	if err != nil {
+		panic(err.Error())
+	}
+	fmt.Fprintf(w, "New post was created")
 }
 
 func getPost(w http.ResponseWriter, r *http.Request) {
