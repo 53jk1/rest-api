@@ -97,15 +97,16 @@ func updatePost(w http.ResponseWriter, r *http.Request) {
 }
 
 func deletePost(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
-	for index, item := range posts {
-		if item.ID == params["id"] {
-			posts = append(posts[:index], posts[index+1:]...)
-			break
-		}
+	stmt, err := db.Prepare("DELETE FROM posts WHERE id = ?")
+	if err != nil {
+		panic(err.Error())
 	}
-	json.NewEncoder(w).Encode(books)
+	_, err = stmt.Exec(params["id"])
+	if err != nil {
+		panic(err.Error())
+	}
+	fmt.Fprintf(w, "Post with ID = %s was deleted", params["id"])
 }
 
 func main() {
