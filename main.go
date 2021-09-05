@@ -34,6 +34,7 @@ func main() {
 	http.ListenAndServe(":8000", router)
 }
 func getPosts(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "getPosts()")
 	w.Header().Set("Content-Type", "application/json")
 	var posts []Post
 	result, err := db.Query("SELECT id, title from posts")
@@ -52,6 +53,7 @@ func getPosts(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(posts)
 }
 func createPost(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "createPost()")
 	w.Header().Set("Content-Type", "application/json")
 	stmt, err := db.Prepare("INSERT INTO posts(title) VALUES(?)")
 	if err != nil {
@@ -71,6 +73,7 @@ func createPost(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "New post was created")
 }
 func getPost(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "getPost()")
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
 	result, err := db.Query("SELECT id, title FROM posts WHERE id = ?", params["id"])
@@ -88,6 +91,7 @@ func getPost(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(post)
 }
 func updatePost(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "updatePost()")
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
 	stmt, err := db.Prepare("UPDATE posts SET title = ? WHERE id = ?")
@@ -108,6 +112,7 @@ func updatePost(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Post with ID = %s was updated", params["id"])
 }
 func deletePost(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "deletePost()")
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
 	stmt, err := db.Prepare("DELETE FROM posts WHERE id = ?")
