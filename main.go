@@ -20,12 +20,19 @@ var db *sql.DB
 var err error
 
 func main() {
+
 	db, err = sql.Open("mysql", "<user>:<password>@tcp(127.0.0.1:3306)/<dbname>")
 	if err != nil {
 		panic(err.Error())
 	}
 	defer db.Close()
-	router := mux.NewRouter()
+
+	handleRequests()
+
+}
+
+func handleRequests() {
+	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/posts", getPosts).Methods("GET")
 	router.HandleFunc("/posts", createPost).Methods("POST")
 	router.HandleFunc("/posts/{id}", getPost).Methods("GET")
@@ -33,6 +40,7 @@ func main() {
 	router.HandleFunc("/posts/{id}", deletePost).Methods("DELETE")
 	http.ListenAndServe(":8000", router)
 }
+
 func getPosts(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "getPosts()")
 	w.Header().Set("Content-Type", "application/json")
